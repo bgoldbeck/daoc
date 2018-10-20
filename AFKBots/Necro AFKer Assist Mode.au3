@@ -7,8 +7,8 @@
 #requireadmin
 #NoTrayIcon
 
-Local $searchKey = "{Tab}"
-;Local $searchKey = "4";
+;Local $searchKey = "{Tab}"
+Local $searchKey = "4";
 
 HotKeySet("{PAUSE}", "TogglePause")
 If _Singleton("AFK",1) = 0 Then
@@ -48,7 +48,7 @@ $right = iniread("config.ini", "Rectangle", "Right","")
 $bottom = iniread("config.ini", "Rectangle", "Bottom","")
 $hex = iniread("Config.ini","Color","Color''Hit''","")
 
-Dim $timeoutLength = 20000
+Dim $timeoutLength = 30000
 
 Dim $quickcastBegin = TimerInit()
 Dim $quickcastDif  = TimerDiff($quickcastBegin)
@@ -146,6 +146,9 @@ EndFunc
 
 Func OnTargetAqcuired()
 	GUICtrlSetData($statusButton, "Status:  Attacking Target.")
+
+	$targetTimeoutBegin = TimerInit()
+
 	ControlSend($windowName, "", "", "f") ; Face
 	Sleep(200)
 	ControlSend($windowName, "", "", "1") ; Power tap
@@ -177,6 +180,9 @@ Func OnTarget()
 	EndIf
 
 	$quickcastDif = TimerDiff($quickcastBegin)
+
+	ControlSend($windowName, "", "", "4") ; Assist
+	Sleep(200)
 	ControlSend($windowName, "", "", "2") ; Life tap (shade)
 	Sleep(200)
 
@@ -185,10 +191,16 @@ EndFunc
 Func OnEndTarget()
 	GUICtrlSetData($statusButton, "Status:  Searching for Target.")
 	$targetTimeoutBegin = TimerInit()
-	Sleep(750)
+	ControlSend($windowName, "", "", "{F1}") ; This is the target group leader key by default.
+	Sleep(250)
+	ControlSend($windowName, "", "", "q")
+	Sleep(250)
+	ControlSend($windowName, "", "", "{ESC}")
+	Sleep(250)
 EndFunc
 
 Func NoTarget()
+	; Stuff to do while we have no target.
 	ControlSend($windowName, "", "", $searchKey)
 	Sleep(500)
 EndFunc
